@@ -31,7 +31,7 @@
          ]
         ; 创建新节点
         ; 并以 "user_id" 为键， user-id 为值，将节点保存到 user-index 索引中
-        (node/add-to-index (:id new-user-node) user-index "user_id" user-id)
+        (node/add-to-index new-user-node user-index "user_id" user-id)
     )
 )
 
@@ -68,7 +68,7 @@
         ; 在两个用户节点之间建立 :follow 关系
         ; 并以 user-id 为键， target-id 为值，将关系添加到 follow-index 索引
         (let [rel (relationship/create user target :follow)]
-            (relationship/add-to-index (:id rel) follow-index user-id target-id)
+            (relationship/add-to-index rel follow-index user-id target-id)
         )
     )
 )
