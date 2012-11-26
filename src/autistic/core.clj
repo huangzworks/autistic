@@ -190,3 +190,37 @@
         (extract-all-uid-from-multi-query-result {:tag "follower" :result result})
     )
 )
+
+
+
+;; 
+;; 统计正在关注人数 / 统计关注者人数
+;;
+
+(defn count-following-number
+    "返回给定用户正在关注的用户数量。"
+    [uid]
+    (let [
+            result (cypher/tquery "START user=node:user(uid = {uid})
+                                   MATCH user-[:follow]->target
+                                   RETURN count(target)"
+                                  {:uid uid}
+            )
+         ]
+        (get (first result) "count(target)")
+    )
+)
+
+(defn count-follower-number
+    "返回正在关注给定用户的人数。"
+    [uid]
+    (let [
+            result (cypher/tquery "START user = node:user( uid = {uid} )
+                                   MATCH follower-[:follow]->user
+                                   RETURN count(follower)"
+                                   {:uid uid}
+            )
+         ]
+        (get (first result) "count(follower)")
+    )
+)

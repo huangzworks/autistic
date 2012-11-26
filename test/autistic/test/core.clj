@@ -369,3 +369,85 @@
         (following-each-other? huangz peter)
     )
 )
+
+
+; count-following-number
+
+(deftest count-following-number-RETURN-0-when-NO-FOLLOWING
+    
+    (add-huangz!)
+
+    (is
+        (= 0
+           (count-following-number huangz)
+        )
+    )
+)
+
+(deftest count-following-number-RETURN-NOT-0-when-HAVE-SOME-FOLLOWING
+    
+    (add-huangz!)
+
+    ; following peter
+
+    (add-peter!)
+    (follow! huangz peter)
+
+    (is
+        (= 1
+           (count-following-number huangz)
+        )
+    )
+
+    ; following peter and mary
+
+    (add-mary!)
+    (follow! huangz mary)
+
+    (is
+        (= 2
+           (count-following-number huangz)
+        )
+    )
+)
+
+
+; count-follower-number
+
+(deftest count-follower-number-RETURN-0-when-NO-FOLLOWER
+
+    (add-huangz!)
+
+    (is
+        (= 0
+           (count-follower-number huangz)
+        )
+    )
+)
+
+(deftest count-follower-number-RETURN-NOT-0-when-HAVE-SOME-FOLLOWER
+
+    (add-huangz!)
+
+    ; one follower
+
+    (add-peter!)
+    (follow! peter huangz)
+
+    (is
+        (= 1
+           (count-follower-number huangz)
+        )
+    )
+
+    ; two follower
+
+    (add-mary!)
+    (follow! mary huangz)
+
+    (is
+        (= 2
+           (count-follower-number huangz)
+        )
+    )
+)
