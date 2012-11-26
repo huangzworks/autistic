@@ -9,7 +9,6 @@
 )
 
 
-
 ;;
 ;; fixture
 ;;
@@ -35,22 +34,34 @@
 
 
 ;;
+;; user id
+;;
+
+(def huangz "huangz")
+
+(def peter "peter")
+
+(def mary "mary")
+
+
+
+;;
 ;; helpers
 ;;
 
 (defn add-peter!
     []
-    (add-user! "peter")
+    (add-user! peter)
 )
 
 (defn add-huangz!
     []
-    (add-user! "huangz")
+    (add-user! huangz)
 )
 
 (defn add-mary!
     []
-    (add-user! "mary")
+    (add-user! mary)
 )
 
 
@@ -64,7 +75,7 @@
 (deftest get-user-RETURN-NIL-when-USER-NOT-EXISTS
     (is 
         (nil? 
-            (get-user "huangz")
+            (get-user huangz)
         )
     )
 )
@@ -74,7 +85,7 @@
     (add-huangz!)
 
     (is 
-        (get-user "huangz")
+        (get-user huangz)
     )
 )
 
@@ -83,7 +94,7 @@
 
 (deftest remove-user!-RETURN-NIL-when-USER-NOT-EXISTS-AND-DELETE-FAIL
     (is 
-        (nil? (remove-user! "huangz"))
+        (nil? (remove-user! huangz))
     )
 )
 
@@ -92,7 +103,32 @@
     (add-huangz!)
 
     (is
-        (not (nil? (remove-user! "huangz")))
+        (not (nil? (remove-user! huangz)))
+    )
+)
+
+
+; get-following-relationship
+
+(deftest get-following-relationship-RETURN-false
+    
+    (add-huangz!)
+    (add-peter!)
+
+    (is
+        (nil? (get-following-relationship huangz peter))
+    )
+)
+
+(deftest get-following-relationship-RETURN-true
+
+    (add-huangz!)
+    (add-peter!)
+    
+    (follow! huangz peter)
+
+    (is
+        (get-following-relationship huangz peter)
     )
 )
 
@@ -105,11 +141,11 @@
     (add-peter!)
 
     (is 
-        (not (nil? (follow! "huangz" "peter")))
+        (not (nil? (follow! huangz peter)))
     )
 
     (is
-        (following? "huangz" "peter")
+        (following? huangz peter)
     )
 )
 
@@ -120,12 +156,12 @@
 
     (add-huangz!)
     (add-peter!)
-    (follow! "huangz" "peter")
+    (follow! huangz peter)
    
-    (unfollow! "huangz" "peter")
+    (unfollow! huangz peter)
 
     (is 
-        (not (following? "huangz" "peter"))
+        (not (following? huangz peter))
     )
 )
 
@@ -137,7 +173,7 @@
     (add-huangz!)
 
     (is 
-        (empty? (get-all-following "huangz"))
+        (empty? (get-all-following huangz))
     )
 )
 
@@ -148,16 +184,16 @@
     ; following peter
 
     (add-peter!)
-    (follow! "huangz" "peter")
+    (follow! huangz peter)
 
-    (let [seq-of-all-following-id (get-all-following "huangz")]
+    (let [seq-of-all-following-id (get-all-following huangz)]
         (is 
             (= 1
                (count seq-of-all-following-id)
             )
         )
         (is
-            (= "peter"
+            (= peter
                (first seq-of-all-following-id)
             )
         )
@@ -166,9 +202,9 @@
     ; following peter and mary
 
     (add-mary!)
-    (follow! "huangz" "mary")
+    (follow! huangz mary)
 
-    (let [seq-of-all-following-id (get-all-following "huangz")]
+    (let [seq-of-all-following-id (get-all-following huangz)]
         (is
             (= 2
                (count seq-of-all-following-id)
@@ -176,7 +212,7 @@
         )
         (is
             (= (sort seq-of-all-following-id)
-               (sort ["peter" "mary"])
+               (sort [peter mary])
             )
         )
     )
@@ -190,7 +226,7 @@
     (add-huangz!)
 
     (is
-        (empty? (get-all-follower "huangz"))
+        (empty? (get-all-follower huangz))
     )
 )
 
@@ -201,16 +237,16 @@
     ; one follower
     
     (add-peter!)
-    (follow! "peter" "huangz")
+    (follow! peter huangz)
 
-    (let [all-follower-id (get-all-follower "huangz")]
+    (let [all-follower-id (get-all-follower huangz)]
         (is
             (= 1
                (count all-follower-id)
             )
         )
         (is
-            (= "peter"
+            (= peter
                (first all-follower-id)
             )
         )
@@ -219,9 +255,9 @@
     ; two followers
 
     (add-mary!)
-    (follow! "mary" "huangz")
+    (follow! mary huangz)
 
-    (let [all-follower-id (get-all-follower "huangz")]
+    (let [all-follower-id (get-all-follower huangz)]
         (is
             (= 2
                (count all-follower-id)
@@ -229,7 +265,7 @@
         )
         (is
             (= (sort all-follower-id)
-               (sort ["peter" "mary"])
+               (sort [peter mary])
             )
         )
     )
@@ -244,7 +280,7 @@
     (add-peter!)
 
     (is
-        (false? (following? "huangz" "peter"))
+        (false? (following? huangz peter))
     )
 )
 
@@ -252,10 +288,10 @@
 
     (add-huangz!)
     (add-peter!)
-    (follow! "huangz" "peter")
+    (follow! huangz peter)
 
     (is
-        (following? "huangz" "peter")
+        (following? huangz peter)
     )
 )
 
@@ -268,7 +304,7 @@
     (add-peter!)
 
     (is
-        (false? (following-by? "peter" "huangz"))
+        (false? (following-by? peter huangz))
     )
 )
 
@@ -276,10 +312,10 @@
     
     (add-huangz!)
     (add-peter!)
-    (follow! "huangz" "peter")
+    (follow! huangz peter)
 
     (is
-        (following-by? "peter" "huangz")
+        (following-by? peter huangz)
     )
 )
 
@@ -293,10 +329,10 @@
 
     ; 检查两个方向，确保符合交换率
     (is
-        (false? (following-each-other? "peter" "huangz"))
+        (false? (following-each-other? peter huangz))
     )
     (is
-        (false? (following-each-other? "huangz" "peter"))
+        (false? (following-each-other? huangz peter))
     )
 )
 
@@ -305,14 +341,14 @@
     (add-huangz!)
     (add-peter!)
 
-    (follow! "huangz" "peter")
+    (follow! huangz peter)
 
     ; 检查两个方向，确保符合交换率
     (is
-        (false? (following-each-other? "peter" "huangz"))
+        (false? (following-each-other? peter huangz))
     )
     (is
-        (false? (following-each-other? "huangz" "peter"))
+        (false? (following-each-other? huangz peter))
     )
 )
         
@@ -322,14 +358,14 @@
     (add-huangz!)
     (add-peter!)
 
-    (follow! "huangz" "peter")
-    (follow! "peter" "huangz")
+    (follow! huangz peter)
+    (follow! peter huangz)
 
     ; 检查两个方向，确保符合交换率
     (is
-        (following-each-other? "peter" "huangz")
+        (following-each-other? peter huangz)
     )
     (is
-        (following-each-other? "huangz" "peter")
+        (following-each-other? huangz peter)
     )
 )

@@ -1,60 +1,81 @@
 (ns autistic.core
     (:require
-        [clojurewerkz.neocons.rest :as nr]
+        [clojurewerkz.neocons.rest :as neocons]
         [clojurewerkz.neocons.rest.nodes :as node]
         [clojurewerkz.neocons.rest.relationships :as relationship]
         [clojurewerkz.neocons.rest.cypher :as cypher]
     )
 )
 
+
+;;
 ;; 连接数据库
 ;;
 
-(nr/connect! "http://localhost:7474/db/data")
+(neocons/connect! "http://localhost:7474/db/data")
 
 
-;; 索引的名字
+
+;;
+;; 与索引有关的常量
 ;;
 
 (def user-index "user")
+
+(def key-of-user-index "uid")
+
 (def follow-index "follow")
 
 
+
+;;
 ;; 添加用户 / 查找用户 / 删除用户
 ;;
 
 (defn add-user!
     "将给定用户添加到数据库中。"
-    [user-id]
+    [uid]
     (let [
-            new-user-node (node/create {:user-id user-id})
+            user-node (node/create {:uid uid})
          ]
-        ; 创建新节点
-        ; 并以 "user_id" 为键， user-id 为值，将节点保存到 user-index 索引中
-        (node/add-to-index new-user-node user-index "user_id" user-id)
+        ; 以 key-of-user-index 作为键， uid 作为值
+        ; 将节点添加到 user-index 索引
+        (node/add-to-index user-node            ; node
+                           user-index           ; index
+                           key-of-user-index    ; key
+                           uid                  ; value
+        )
     )
 )
 
 (defn get-user
     "根据给定 id ，在数据库中查找用户。
     没找到则回 nil 。"
-    [user-id]
-    ; 在索引中查找
-    (node/find-one user-index "user_id" user-id)
+    [uid]
+    (node/find-one user-index           ; index
+                   key-of-user-index    ; key
+                   uid                  ; value
+    )
 )
 
 (defn remove-user!
     "根据给定 id ，将用户从数据库中移除。
-    注意，在删除用户前必须先删除所有和该用户有关的关系。"
-    [user-id]
-    (when-let [user (get-user user-id)]
-        ; 注意顺序：先删除节点的索引，再删除节点
-        (node/delete-from-index user user-index "user_id" user-id)
-        (node/delete user)
+    在删除用户前，必须先删除所有和该用户有关的关系，否则删除失败并抛出异常。"
+    [uid]
+    (when-let [user-node (get-user uid)]
+        ; 先删除节点的索引，再删除节点
+        (node/delete-from-index user-node           ; node
+                                user-index          ; index
+                                key-of-user-index   ; key
+                                uid                 ; value
+        )
+        (node/delete user-node)
     )
 )
 
 
+
+;;
 ;; 关注 / 取消关注
 ;;
 
@@ -62,70 +83,56 @@
     "将 target 添加到 user 的关注当中。"
     [user-id target-id]
     (let [
-            user (get-user user-id)
-            target (get-user target-id)
+            user-node (get-user user-id)
+            target-node (get-user target-id)
+            rel (relationship/create user-node target-node :follow)
          ]
-        ; 在两个用户节点之间建立 :follow 关系
-        ; 并以 user-id 为键， target-id 为值，将关系添加到 follow-index 索引
-        (let [rel (relationship/create user target :follow)]
-            (relationship/add-to-index rel follow-index user-id target-id)
+        ; 以 user-id 作为键， target-id 作为值
+        ; 将关系添加到 follow-index 索引
+        (relationship/add-to-index rel          ; relationship
+                                   follow-index ; index
+                                   user-id      ; key
+                                   target-id    ; value
         )
+    )
+)
+
+(defn get-following-relationship
+    "根据给定 user 和 target ，返回 user 关注 target 的关系。
+    如果 user 没有关注 target ，那么返回 nil 。"
+    [user-id target-id]
+    (relationship/find-one follow-index ; index
+                           user-id      ; key
+                           target-id    ; value
     )
 )
 
 (defn unfollow!
     "将 target 从 user 的关注中移除。"
     [user-id target-id]
-    (when-let [rel (relationship/find-one follow-index user-id target-id)]
-        ; 注意顺序：先删除关系的索引，再删除关系
-        (relationship/delete-from-index rel follow-index user-id target-id)
+    (when-let [
+                rel (get-following-relationship user-id target-id)
+              ]
+        ; 先删除关系的索引，再删除关系
+        (relationship/delete-from-index rel             ; relationship
+                                        follow-index    ; index
+                                        user-id         ; key
+                                        target-id       ; value
+        )
         (relationship/delete rel)
     )
 )
 
 
-;; 返回所有正在关注 / 返回所有关注者
-;; 
 
-(defn get-all-following
-    "返回所有 user 正在关注的用户的 user-id 。"
-    [user-id]
-    (let [
-            result (cypher/tquery "START user=node:user(user_id = {uid}) 
-                                   MATCH user-[:follow]->target 
-                                   RETURN target"
-                                   {:uid user-id}
-                   )
-         ]
-        (map #(-> (get % "target") :data :user-id) result)
-    )
-)
-
-(defn get-all-follower
-    "返回所有正在关注 user 的用户的 user-id 。"
-    [user-id]
-    (let [
-            result (cypher/tquery "START user=node:user(user_id = {uid})
-                                   MATCH follower-[:follow]->user
-                                   RETURN follower"
-                                   {:uid user-id}
-                   )
-         ]
-        (map #(-> (get % "follower") :data :user-id) result)
-    )
-)
-
-
+;;
 ;; 关系谓词
 ;;
 
 (defn following?
     "检查 user 是否正在关注 target 。"
     [user-id target-id]
-    ; 通过索引，检查两个节点之后是否存在关系
-    (let [rel (relationship/find-one follow-index user-id target-id)]
-        (not (empty? rel))
-    )
+    (not (nil? (get-following-relationship user-id target-id)))
 )
 
 (defn following-by?
@@ -140,5 +147,46 @@
     (and 
         (following? user-id target-id)
         (following? target-id user-id)
+    )
+)
+
+
+
+;;
+;; 返回所有正在关注 / 返回所有关注者
+;; 
+
+(defn- extract-all-uid-from-multi-query-result
+    [{:keys [tag result]}]
+    (map #(-> (get % tag) :data :uid) result)
+)
+
+; TODO: 支持翻页功能
+(defn get-all-following
+    "返回所有 user 正在关注的用户的 uid 。"
+    [uid]
+    (let [
+            result (cypher/tquery "START user = node:user(uid = {uid}) 
+                                   MATCH user-[:follow]->target 
+                                   RETURN target"
+                                   {:uid uid}
+                   )
+         ]
+        (extract-all-uid-from-multi-query-result {:tag "target" :result result})
+    )
+)
+
+; TODO: 支持翻页功能
+(defn get-all-follower
+    "返回所有正在关注 user 的用户的 uid 。"
+    [uid]
+    (let [
+            result (cypher/tquery "START user=node:user(uid = {uid})
+                                   MATCH follower-[:follow]->user
+                                   RETURN follower"
+                                   {:uid uid}
+                   )
+         ]
+        (extract-all-uid-from-multi-query-result {:tag "follower" :result result})
     )
 )
