@@ -20,7 +20,7 @@
 (def follow-index "follow")
 
 
-;; 添加用户 / 查找用户
+;; 添加用户 / 查找用户 / 删除用户
 ;;
 
 (defn add-user!
@@ -41,6 +41,17 @@
     [user-id]
     ; 在索引中查找
     (node/find-one user-index "user_id" user-id)
+)
+
+(defn remove-user!
+    "根据给定 id ，将用户从数据库中移除。
+    注意，在删除用户前必须先删除所有和该用户有关的关系。"
+    [user-id]
+    (when-let [user (get-user user-id)]
+        ; 注意顺序：先删除节点的索引，再删除节点
+        (node/delete-from-index user user-index "user_id" user-id)
+        (node/delete user)
+    )
 )
 
 
