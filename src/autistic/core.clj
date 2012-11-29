@@ -79,14 +79,13 @@
     (let [
             user-node (get-user user-id)
             target-node (get-user target-id)
-            rel (relationship/create user-node target-node :follow)
          ]
-        ; 以 user-id 作为键， target-id 作为值
-        ; 将关系添加到 follow-index 索引
-        (relationship/add-to-index rel          ; relationship
-                                   follow-index ; index
-                                   user-id      ; key
-                                   target-id    ; value
+        (relationship/create-unique-in-index user-node      ; to
+                                             target-node    ; from
+                                             :follow        ; relationship
+                                             follow-index
+                                             user-id        ; index key
+                                             target-id      ; index value
         )
     )
 )
