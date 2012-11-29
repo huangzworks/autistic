@@ -200,7 +200,7 @@
                                   {:uid uid}
             )
          ]
-        (get (first result) "count(target)")
+        (-> result first (get "count(target)"))
     )
 )
 
