@@ -35,16 +35,10 @@
 (defn add-user!
     "将给定用户添加到数据库中。"
     [uid]
-    (let [
-            user-node (node/create {:uid uid})
-         ]
-        ; 以 key-of-user-index 作为键， uid 作为值
-        ; 将节点添加到 user-index 索引
-        (node/add-to-index user-node            ; node
-                           user-index           ; index
-                           key-of-user-index    ; key
-                           uid                  ; value
-        )
+    (node/create-unique-in-index user-index
+                                 key-of-user-index
+                                 uid                ; index value
+                                 {:uid uid}         ; node property
     )
 )
 
