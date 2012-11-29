@@ -108,9 +108,9 @@
               ]
         ; 先删除关系的索引，再删除关系
         (relationship/delete-from-index rel             ; relationship
-                                        follow-index    ; index
-                                        user-id         ; key
-                                        target-id       ; value
+                                        follow-index
+                                        user-id         ; index key
+                                        target-id       ; index value
         )
         (relationship/delete rel)
     )
