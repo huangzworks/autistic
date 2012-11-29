@@ -2,22 +2,22 @@
 
 Autistic 是一个用 Neo4j 实现基本社交关系的库，功能包括：
 
-    * 用户
-        * 添加用户 ``add-user!``
-        * 删除用户 ``remove-user!``
-        * 获取用户 ``get-user!
-    * 关注
-        * 添加关注 ``follow!``
-        * 取消关注 ``unfollow!``
-        * 获取关注关系 ``get-following-relationship``
-        * 返回所有正在关注的人 ``get-all-follower``
-        * 返回正在关注的人的数量 ``count-follower-number``
-        * 返回所有关注者 ``get-all-follower``
-        * 返回关注者的数量 ``count-follower-number``
-    * 关系谓词
-        * 正在关注？ ``following?``
-        * 正在被关注？ ``following-by?``
-        * 两个人互相关注？ ``following-each-other?``
+* 用户
+    * 添加用户 ``add-user!``
+    * 删除用户 ``remove-user!``
+    * 获取用户 ``get-user!
+* 关注
+    * 添加关注 ``follow!``
+    * 取消关注 ``unfollow!``
+    * 获取关注关系 ``get-following-relationship``
+    * 返回所有正在关注的人 ``get-all-follower``
+    * 返回正在关注的人的数量 ``count-follower-number``
+    * 返回所有关注者 ``get-all-follower``
+    * 返回关注者的数量 ``count-follower-number``
+* 关系谓词
+    * 正在关注？ ``following?``
+    * 正在被关注？ ``following-by?``
+    * 两个人互相关注？ ``following-each-other?``
 
 
 ## 用例
@@ -62,7 +62,7 @@ Autistic 是一个用 Neo4j 实现基本社交关系的库，功能包括：
     user=> (get-following-relationship "huangz" "peter")
     nil
 
-### 正在关注？/正在被关注？正在互相关注？
+### 正在关注？ / 正在被关注？ / 正在互相关注？
 
     user=> (add-user! "huangz")
     #clojurewerkz.neocons.rest.records.Node{:id 2016, :location-uri "http://localhost:7474/db/data/node/2016", :data {:uid "huangz"}, :relationships-uri nil, :create-relationship-uri "http://localhost:7474/db/data/node/2016/relationships"}
