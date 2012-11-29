@@ -252,7 +252,7 @@
     (add-huangz!)
 
     (is
-        (empty? (get-all-follower huangz))
+        (empty? (get-all-follower huangz skip-number limit-number))
     )
 )
 
@@ -265,7 +265,7 @@
     (add-peter!)
     (follow! peter huangz)
 
-    (let [all-follower-id (get-all-follower huangz)]
+    (let [all-follower-id (get-all-follower huangz skip-number limit-number)]
         (is
             (= 1
                (count all-follower-id)
@@ -283,7 +283,7 @@
     (add-mary!)
     (follow! mary huangz)
 
-    (let [all-follower-id (get-all-follower huangz)]
+    (let [all-follower-id (get-all-follower huangz skip-number limit-number)]
         (is
             (= 2
                (count all-follower-id)
@@ -293,6 +293,23 @@
             (= (sort all-follower-id)
                (sort [peter mary])
             )
+        )
+    )
+)
+
+(deftest get-all-follower-WORKS-WITH-LIMIT-AND-SKIP
+
+    (add-huangz!)
+    (add-peter!)
+    (add-mary!)
+
+    (follow! peter huangz)
+    (follow! mary huangz)
+
+    ; two following but only return one
+    (is
+        (= 1
+           (count (get-all-follower huangz 0 1))
         )
     )
 )
