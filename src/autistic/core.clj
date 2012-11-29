@@ -149,11 +149,6 @@
 ;; 返回所有正在关注 / 返回所有关注者
 ;; 
 
-(defn- extract-all-uid-from-multi-query-result
-    [{:keys [tag result]}]
-    (map #(-> (get % tag) :data :uid) result)
-)
-
 (defn get-all-following
     "返回所有 user 正在关注的用户的 uid 。"
     [uid skip-number limit-number]
