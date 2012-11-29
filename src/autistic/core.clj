@@ -46,9 +46,9 @@
     "根据给定 id ，在数据库中查找用户。
     没找到则回 nil 。"
     [uid]
-    (node/find-one user-index           ; index
-                   key-of-user-index    ; key
-                   uid                  ; value
+    (node/find-one user-index
+                   key-of-user-index
+                   uid                  ; index value
     )
 )
 
