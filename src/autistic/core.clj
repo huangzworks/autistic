@@ -58,10 +58,10 @@
     [uid]
     (when-let [user-node (get-user uid)]
         ; 先删除节点的索引，再删除节点
-        (node/delete-from-index user-node           ; node
-                                user-index          ; index
-                                key-of-user-index   ; key
-                                uid                 ; value
+        (node/delete-from-index user-node
+                                user-index
+                                key-of-user-index
+                                uid                 ; index value
         )
         (node/delete user-node)
     )
