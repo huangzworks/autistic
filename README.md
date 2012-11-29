@@ -20,6 +20,27 @@ Autistic 是一个用 Neo4j 实现基本社交关系的库，功能包括：
     * 两个人互相关注？ ``following-each-other?``
 
 
+## 安装与需求
+
+需求：
+
+* Clojure 1.3+
+* Neocons 1.0+
+* Neo4j 1.8
+
+通过 leiningen 安装：
+
+    [autistic "1.0.0-SNAPSHOT"]
+
+通过 maven 安装：
+
+    <dependency>
+    <groupId>autistic</groupId>
+    <artifactId>autistic</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+
+
 ## 用例
 
 ### 添加/删除/查找用户
