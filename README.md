@@ -26,7 +26,7 @@ Autistic 是一个用 Neo4j 实现基本社交关系的库，功能包括：
 
 * Clojure 1.3+
 * Neocons 1.0+
-* Neo4j 1.8
+* Neo4j 1.8+
 
 通过 leiningen 安装：
 
@@ -39,6 +39,8 @@ Autistic 是一个用 Neo4j 实现基本社交关系的库，功能包括：
     <artifactId>autistic</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     </dependency>
+
+[Clojar地址](https://clojars.org/autistic)
 
 
 ## 用例
