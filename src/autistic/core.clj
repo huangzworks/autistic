@@ -154,18 +154,18 @@
     (map #(-> (get % tag) :data :uid) result)
 )
 
-; TODO: 支持翻页功能
 (defn get-all-following
     "返回所有 user 正在关注的用户的 uid 。"
-    [uid]
+    [uid skip-number limit-number]
     (let [
-            result (cypher/tquery "START user = node:user(uid = {uid}) 
-                                   MATCH user-[:follow]->target 
-                                   RETURN target"
-                                   {:uid uid}
-                   )
+            query-statement (str "START user = node:user(uid = {uid})
+                                  MATCH user-[:follow]->target
+                                  RETURN target.uid
+                                  SKIP " skip-number
+                                  "LIMIT " limit-number)
+            result (cypher/tquery query-statement {:uid uid})
          ]
-        (extract-all-uid-from-multi-query-result {:tag "target" :result result})
+        (map #(get % "target.uid") result)
     )
 )
 

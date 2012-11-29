@@ -46,6 +46,15 @@
 
 
 ;;
+;; constant for get-all-following and get-all-follower
+;;
+
+(def skip-number 0)
+(def limit-number 10086)
+
+
+
+;;
 ;; helpers
 ;;
 
@@ -173,7 +182,7 @@
     (add-huangz!)
 
     (is 
-        (empty? (get-all-following huangz))
+        (empty? (get-all-following huangz skip-number limit-number))
     )
 )
 
@@ -186,7 +195,7 @@
     (add-peter!)
     (follow! huangz peter)
 
-    (let [seq-of-all-following-id (get-all-following huangz)]
+    (let [seq-of-all-following-id (get-all-following huangz skip-number limit-number)]
         (is 
             (= 1
                (count seq-of-all-following-id)
@@ -204,7 +213,7 @@
     (add-mary!)
     (follow! huangz mary)
 
-    (let [seq-of-all-following-id (get-all-following huangz)]
+    (let [seq-of-all-following-id (get-all-following huangz skip-number limit-number)]
         (is
             (= 2
                (count seq-of-all-following-id)
@@ -214,6 +223,23 @@
             (= (sort seq-of-all-following-id)
                (sort [peter mary])
             )
+        )
+    )
+)
+
+(deftest get-all-following-WORKS-WITH-LIMIT-AND-SKIP
+
+    (add-huangz!)
+    (add-peter!)
+    (add-mary!)
+
+    (follow! huangz peter)
+    (follow! huangz mary)
+
+    ; two following but only return one
+    (is
+        (= 1
+           (count (get-all-following huangz 0 1))
         )
     )
 )
