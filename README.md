@@ -5,7 +5,7 @@ Autistic 是一个用 Neo4j 实现基本社交关系的库，功能包括：
 * 用户
     * 添加用户 ``add-user!``
     * 删除用户 ``remove-user!``
-    * 获取用户 ``get-user!
+    * 获取用户 ``get-user!``
 * 关注
     * 添加关注 ``follow!``
     * 取消关注 ``unfollow!``
