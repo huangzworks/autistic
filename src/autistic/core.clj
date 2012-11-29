@@ -214,6 +214,6 @@
                                    {:uid uid}
             )
          ]
-        (get (first result) "count(follower)")
+        (-> result first (get "count(follower)"))
     )
 )
