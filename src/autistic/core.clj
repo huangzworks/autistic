@@ -94,9 +94,9 @@
     "根据给定 user 和 target ，返回 user 关注 target 的关系。
     如果 user 没有关注 target ，那么返回 nil 。"
     [user-id target-id]
-    (relationship/find-one follow-index ; index
-                           user-id      ; key
-                           target-id    ; value
+    (relationship/find-one follow-index
+                           user-id      ; index key
+                           target-id    ; index value
     )
 )
 
