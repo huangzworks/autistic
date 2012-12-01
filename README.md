@@ -42,6 +42,8 @@ Autistic 是一个用 Neo4j 实现基本社交关系的库，功能包括：
 
 [Clojar地址](https://clojars.org/autistic)
 
+[![Build Status](https://secure.travis-ci.org/huangz1990/autistic.png?branch=master)](https://travis-ci.org/huangz1990/autistic)
+
 
 ## 用例
 
