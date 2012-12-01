@@ -10,8 +10,8 @@ Autistic 是一个用 Neo4j 实现基本社交关系的库，功能包括：
     * 添加关注 ``follow!``
     * 取消关注 ``unfollow!``
     * 获取关注关系 ``get-following-relationship``
-    * 返回所有正在关注的人 ``get-all-follower``
-    * 返回正在关注的人的数量 ``count-follower-number``
+    * 返回所有正在关注的人 ``get-all-following``
+    * 返回正在关注的人的数量 ``count-following-number``
     * 返回所有关注者 ``get-all-follower``
     * 返回关注者的数量 ``count-follower-number``
 * 关系谓词
