@@ -1,0 +1,9 @@
+language: clojure
+lein: lein
+script: lein test
+jdk:
+  - openjdk6
+  - openjdk7
+  - oraclejdk7
+services:
+  - neo4j
